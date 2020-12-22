@@ -1,6 +1,7 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/auth'
+import 'firebase/storage'
 // Your web app's Firebase configuration
 var firebaseConfig = {
 	apiKey: 'AIzaSyDkMFooUT8s1eFh0BABok0dSHmAEWtl39U',
@@ -23,14 +24,15 @@ const signOut = () => auth.signOut()
 
 window.firebase = firebase
 
+const storage = firebase.storage()
+
 const getUserDocument = async uid => {
 	if (!uid) return null
 
 	try {
-		const userDocument = await firestore.doc(`users/${uid}`).get()
-		console.log({ userDocument })
+		return firestore.doc(`users/${uid}`)
 
-		return { uid, ...userDocument.data() }
+		// return { uid, ...userDocument.data() }
 	} catch (err) {
 		console.error('Error not created User', err)
 	}
@@ -75,5 +77,5 @@ export {
 	auth,
 	signOut,
 	createUserProfileDocument,
-	getUserDocument,
+	storage,
 }
