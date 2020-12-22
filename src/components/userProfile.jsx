@@ -1,23 +1,36 @@
-import React, { useState } from 'react'
-import { auth, firestore } from '../firebase'
+import React, { useState, useRef } from 'react'
+import { auth, firestore, storage } from '../firebase'
 
 const UserProfile = () => {
 	const [displayName, setDisplayName] = useState('')
+	const imageRef = useRef(null)
 
 	const onChangeHandler = e => {
 		setDisplayName(e.target.value)
 	}
-
-	const onSubmitHandler = async e => {
+	const onSubmitHandler = e => {
 		e.preventDefault()
 
 		const userId = auth.currentUser.uid
-		const userRef = await firestore.doc(`users/${userId}`)
+		const userRef = firestore.doc(`users/${userId}`)
 
 		if (displayName) {
 			userRef.update({
 				displayName,
 			})
+		}
+
+		const file = imageRef.current.files[0]
+		console.log({ file })
+
+		if (file) {
+			storage
+				.ref()
+				.child('user-profile')
+				.child(file.name)
+				.put(file)
+				.then(res => res.ref.getDownloadURL())
+				.then(photoURL => userRef.update({ photoURL }))
 		}
 	}
 
@@ -32,9 +45,10 @@ const UserProfile = () => {
 					placeholder='Display Name'
 					onChange={onChangeHandler}
 				/>
+				<input type='file' ref={imageRef} />
 				<input
 					type='submit'
-					disabled={displayName === '' ? true : false}
+					// disabled={displayName === '' ? true : false}
 					name='Update Display Name'
 				/>
 			</form>
