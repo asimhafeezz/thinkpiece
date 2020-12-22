@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react'
 
 //firebase
-import { firestore, auth } from '../firebase.js'
+import {
+	firestore,
+	auth,
+	getUserDocument,
+	createUserProfileDocument,
+} from '../firebase.js'
 import { collectIdsAndData } from '../utilities.js'
 
 //authentication
@@ -26,7 +31,8 @@ const Application = () => {
 
 	useEffect(() => {
 		const unsub = () => {
-			auth.onAuthStateChanged(user => {
+			auth.onAuthStateChanged(async userAuth => {
+				const user = await createUserProfileDocument(userAuth)
 				console.log({ user })
 				setUser(user)
 			})
