@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 //firebase
-import { firestore } from '../firebase.js'
+import { firestore, auth } from '../firebase.js'
 import { collectIdsAndData } from '../utilities.js'
 
 //authentication
@@ -18,6 +18,17 @@ const Application = () => {
 			firestore.collection('posts').onSnapshot(snapshot => {
 				const posts = snapshot.docs.map(collectIdsAndData)
 				setPosts(posts)
+			})
+		}
+
+		return unsub()
+	}, [])
+
+	useEffect(() => {
+		const unsub = () => {
+			auth.onAuthStateChanged(user => {
+				console.log({ user })
+				setUser(user)
 			})
 		}
 
