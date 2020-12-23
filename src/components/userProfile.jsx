@@ -18,19 +18,23 @@ const UserProfile = () => {
 			userRef.update({
 				displayName,
 			})
+			setDisplayName('')
 		}
 
 		const file = imageRef.current.files[0]
-		console.log({ file })
+		console.log({ filename: file.name })
 
 		if (file) {
 			storage
 				.ref()
-				.child('user-profile')
+				.child('user-profiles')
+				.child(userId)
 				.child(file.name)
 				.put(file)
 				.then(res => res.ref.getDownloadURL())
 				.then(photoURL => userRef.update({ photoURL }))
+
+			// imageRef.current.files = null
 		}
 	}
 
